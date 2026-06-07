@@ -1,5 +1,7 @@
 # 100 Years - Gemma 4 Edge AI Demo
 
+[中文版本](README.zh.md)
+
 ![100 Years app screens](assets/today.png)
 
 Public landing page for the 100 Years Gemma 4 Hackathon submission.
@@ -79,4 +81,3 @@ The source repo is private. The links below require repository access; GDG Revie
 | Today brief | Local model settings | Prediction detail |
 | --- | --- | --- |
 | ![Today health brief](assets/today.png) | ![Local model settings](assets/local-model.png) | ![Prediction detail](assets/prediction.png) |
-
