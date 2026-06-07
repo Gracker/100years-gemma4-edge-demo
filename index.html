@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>100 Years - Gemma 4 Edge AI Demo</title>
+  <meta name="description" content="100 Years is a privacy-first iOS longevity assistant running Gemma 4 E2B/E4B on-device for health briefs, tool calling, medical-history context, and local-first report parsing.">
+  <link rel="icon" href="assets/app-icon.png">
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8f6;
+      --ink: #17211c;
+      --muted: #5a665f;
+      --line: #d9dfd8;
+      --panel: #ffffff;
+      --green: #1f7a53;
+      --teal: #0b6f78;
+      --blue: #2d5bd1;
+      --red: #b3433d;
+      --shadow: 0 18px 50px rgba(28, 39, 33, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    a {
+      color: var(--teal);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    .shell {
+      width: min(1160px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      padding: 28px 0 18px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(247, 248, 246, 0.9);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(12px);
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .brand img {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+    }
+
+    .navlinks {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: 14px;
+    }
+
+    .hero {
+      min-height: 88vh;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 470px);
+      gap: 44px;
+      align-items: center;
+      padding: 48px 0 42px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      color: var(--green);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 780px;
+      font-size: clamp(44px, 7vw, 86px);
+      line-height: 0.96;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 680px;
+      margin: 24px 0 0;
+      color: var(--muted);
+      font-size: 20px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 10px 16px;
+      border: 1px solid var(--ink);
+      border-radius: 6px;
+      background: var(--ink);
+      color: #fff;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .button.secondary {
+      background: transparent;
+      color: var(--ink);
+    }
+
+    .phone-stack {
+      position: relative;
+      min-height: 560px;
+    }
+
+    .phone {
+      position: absolute;
+      width: 235px;
+      border-radius: 30px;
+      padding: 10px;
+      background: #111;
+      box-shadow: var(--shadow);
+    }
+
+    .phone img {
+      display: block;
+      width: 100%;
+      border-radius: 22px;
+    }
+
+    .phone.one {
+      right: 155px;
+      top: 16px;
+      transform: rotate(-4deg);
+    }
+
+    .phone.two {
+      right: 18px;
+      top: 104px;
+      transform: rotate(5deg);
+    }
+
+    .phone.three {
+      right: 92px;
+      top: 250px;
+      transform: rotate(-1deg);
+    }
+
+    section {
+      padding: 56px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      font-size: 32px;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .card p,
+    .card ul {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .card ul {
+      padding-left: 20px;
+    }
+
+    .matrix {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      display: block;
+      overflow-x: auto;
+    }
+
+    th,
+    td {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      min-width: 150px;
+    }
+
+    th {
+      background: #edf2ef;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .tag {
+      display: inline-flex;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .local { background: #dceee5; color: var(--green); }
+    .hybrid { background: #dcebf0; color: var(--teal); }
+    .cloud { background: #e4e9fb; color: var(--blue); }
+    .guarded { background: #f4dfdc; color: var(--red); }
+
+    .demo-steps {
+      display: grid;
+      gap: 12px;
+      counter-reset: step;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 14px;
+      align-items: start;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .step::before {
+      counter-increment: step;
+      content: counter(step);
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: #fff;
+      font-weight: 800;
+    }
+
+    .step h3 {
+      margin: 0 0 4px;
+      font-size: 18px;
+    }
+
+    .step p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    footer {
+      padding: 34px 0 48px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+    }
+
+    @media (max-width: 880px) {
+      header {
+        position: static;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+        padding-top: 36px;
+      }
+
+      .phone-stack {
+        min-height: 460px;
+      }
+
+      .phone {
+        width: 205px;
+      }
+
+      .phone.one {
+        left: 0;
+        right: auto;
+      }
+
+      .phone.two {
+        right: 0;
+      }
+
+      .phone.three {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        top: 220px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="shell">
+      <nav>
+        <div class="brand">
+          <img src="assets/app-icon.png" alt="100 Years app icon">
+          <span>100 Years</span>
+        </div>
+        <div class="navlinks">
+          <a href="#demo">Demo</a>
+          <a href="#matrix">Support matrix</a>
+          <a href="#report">Report</a>
+          <a href="https://github.com/Gracker/100Years">Private code repo</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero shell" id="top">
+      <div>
+        <div class="eyebrow"><span class="dot"></span> Gemma 4 Hackathon 2026 · Track C Edge AI</div>
+        <h1>Private health intelligence running on a real iPhone.</h1>
+        <p class="lead">100 Years uses on-device Gemma 4 E2B/E4B to turn HealthKit signals, medical history, reports, and lifestyle context into local health briefs, longevity estimates, and privacy-preserving execution receipts.</p>
+        <div class="actions">
+          <a class="button" href="#demo">Watch demo plan</a>
+          <a class="button secondary" href="technical-report.md">Read technical report</a>
+        </div>
+      </div>
+      <div class="phone-stack" aria-label="100 Years app screenshots">
+        <div class="phone one"><img src="assets/today.png" alt="Today health brief screen"></div>
+        <div class="phone two"><img src="assets/local-model.png" alt="Local AI model settings screen"></div>
+        <div class="phone three"><img src="assets/prediction.png" alt="Longevity prediction detail screen"></div>
+      </div>
+    </section>
+
+    <section class="shell" id="links">
+      <h2>Submission Links</h2>
+      <div class="grid">
+        <article class="card">
+          <h3>Demo Video</h3>
+          <p><strong>Status:</strong> Pending upload. Replace this card with the final video URL after recording the 5-minute real-device demo.</p>
+        </article>
+        <article class="card">
+          <h3>Technical Report</h3>
+          <p><a href="technical-report.md">English report</a> and <a href="technical-report.zh.md">Chinese report</a> are public copies for reviewers.</p>
+        </article>
+        <article class="card">
+          <h3>Code Repository</h3>
+          <p>The source repo is private for health-data and unreleased-app reasons: <a href="https://github.com/Gracker/100Years">Gracker/100Years</a>. GDG Reviewer access has been granted.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="shell" id="matrix">
+      <h2>Feature Support Matrix</h2>
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Support mode</th>
+            <th>Demo priority</th>
+            <th>What to show</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Today health brief</td>
+            <td><span class="tag local">Fully local</span></td>
+            <td>Must show</td>
+            <td>Gemma 4 agent calls read-only health tools, then returns a short health brief and receipt.</td>
+          </tr>
+          <tr>
+            <td>Gemma 4 tool calling</td>
+            <td><span class="tag local">Fully local</span></td>
+            <td>Must show</td>
+            <td>Show JSON tool calls such as health snapshot, sleep analysis, and lifespan impact.</td>
+          </tr>
+          <tr>
+            <td>Single-stage longevity estimate</td>
+            <td><span class="tag local">Fully local</span></td>
+            <td>Must show</td>
+            <td>Show medical history, HealthKit, reports, and lifestyle context entering a local prompt.</td>
+          </tr>
+          <tr>
+            <td>Report / PDF parsing</td>
+            <td><span class="tag local">Fully local fallback</span></td>
+            <td>Recommended</td>
+            <td>Local OCR/PDFKit extraction plus local Gemma text structuring.</td>
+          </tr>
+          <tr>
+            <td>Compact sleep / exercise adjustment</td>
+            <td><span class="tag hybrid">Edge-cloud combined</span></td>
+            <td>Optional</td>
+            <td>Local compact estimate first; cloud can provide deeper analysis when explicitly selected.</td>
+          </tr>
+          <tr>
+            <td>Full scenario and lifestyle analysis</td>
+            <td><span class="tag cloud">Cloud only</span></td>
+            <td>Comparison only</td>
+            <td>Long-context deep reasoning is not the primary Edge AI demo.</td>
+          </tr>
+          <tr>
+            <td>Gemma native vision</td>
+            <td><span class="tag guarded">Wired, validation gated</span></td>
+            <td>Boundary note</td>
+            <td>Do not claim production readiness until real iPhone validation is complete.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="shell" id="demo">
+      <h2>Model-Centered Demo Flow</h2>
+      <div class="demo-steps">
+        <article class="step">
+          <div>
+            <h3>Show local model state</h3>
+            <p>Open the local model or result receipt screen and show Gemma 4 E2B/E4B, execution route, and local/cloud label.</p>
+          </div>
+        </article>
+        <article class="step">
+          <div>
+            <h3>Show Gemma 4 tool calling</h3>
+            <p>Generate the Today brief and explain the path through DailyBriefGenerator, AgentExecutor, GemmaAgentDriver, and HealthAgentTools.</p>
+          </div>
+        </article>
+        <article class="step">
+          <div>
+            <h3>Show private medical history</h3>
+            <p>Add a condition, family-history item, or medication and explain how it changes prompt context and disease-risk scoring.</p>
+          </div>
+        </article>
+        <article class="step">
+          <div>
+            <h3>Show structured local output</h3>
+            <p>Run compact longevity analysis and show parsed health scores, risk factors, recommendations, and metadata-only receipt.</p>
+          </div>
+        </article>
+        <article class="step">
+          <div>
+            <h3>Show edge-cloud boundaries</h3>
+            <p>Explain balanced, allLocal, and allCloud modes, then state which tasks are local, hybrid, cloud-only, or validation gated.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="shell" id="report">
+      <h2>Privacy And Review Notes</h2>
+      <div class="grid">
+        <article class="card">
+          <h3>Metadata-only receipt</h3>
+          <p>Receipts disclose route, model, data categories, and tool IDs, not raw disease names, notes, reports, or HealthKit values.</p>
+        </article>
+        <article class="card">
+          <h3>Medical boundary</h3>
+          <p>Outputs are health-model estimates and education, not diagnosis, treatment, or clinical prognosis.</p>
+        </article>
+        <article class="card">
+          <h3>Edge AI boundary</h3>
+          <p>The stable demo centers on local text inference, tool calling, local-first parsing, and receipts. Native vision remains real-device validation gated.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <p>100 Years · Gemma 4 Hackathon 2026 · Track C Edge AI. Last updated June 7, 2026.</p>
+    </div>
+  </footer>
+</body>
+</html>
